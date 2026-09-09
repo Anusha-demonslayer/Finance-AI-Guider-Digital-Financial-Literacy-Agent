@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FinAI Guider – Digital Financial Literacy AI Agent</title>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    :root{
+      --bg1:#020818;--blue1:#1a4fd6;--blue2:#2563eb;--blue3:#3b82f6;
+      --cyan:#06b6d4;--glass-bg:rgba(14,40,100,0.35);--glass-border:rgba(59,130,246,0.35);
+      --glass-hover:rgba(14,40,100,0.55);--text:#e2eaff;--muted:#8baad4;
+      --green:#10b981;--red:#ef4444;--yellow:#f59e0b;
+    }
+    html{scroll-behavior:smooth;}
+    body{font-family:-apple-system,"Segoe UI",system-ui,sans-serif;background:var(--bg1);color:var(--text);overflow-x:hidden;min-height:100vh;}
+
+    /* BG */
+    .bg-orbs{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+    .orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:.18;animation:drift 18s ease-in-out infinite alternate;}
+    .orb1{width:600px;height:600px;background:#1a4fd6;top:-150px;left:-120px;}
+    .orb2{width:500px;height:500px;background:#06b6d4;bottom:-100px;right:-80px;animation-delay:-6s;}
+    .orb3{width:400px;height:400px;background:#6366f1;top:40%;left:40%;animation-delay:-12s;}
+    @keyframes drift{from{transform:translate(0,0) scale(1);}to{transform:translate(40px,30px) scale(1.08);}}
+    .grid-overlay{position:fixed;inset:0;z-index:0;pointer-events:none;
+      background-image:linear-gradient(rgba(59,130,246,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,.04) 1px,transparent 1px);
+      background-size:60px 60px;}
+
+    /* LAYOUT */
+    .page{position:relative;z-index:1;}
+
+    /* NAV */
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;
+      padding:0 40px;height:68px;background:rgba(2,8,24,.75);backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--glass-border);}
+    .nav-logo{font-size:1.25rem;font-weight:800;background:linear-gradient(135deg,#3b82f6,#06b6d4);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+    .nav-links{display:flex;gap:28px;list-style:none;}
+    .nav-links a{color:var(--muted);text-decoration:none;font-size:.88rem;transition:color .2s;}
+    .nav-links a:hover{color:#fff;}
+    .nav-badge{display:flex;align-items:center;gap:8px;}
+    .ibm-badge{padding:5px 14px;border-radius:999px;font-size:.75rem;font-weight:700;
+      background:linear-gradient(135deg,rgba(37,99,235,.4),rgba(6,182,212,.3));
+      border:1px solid rgba(59,130,246,.5);color:var(--cyan);}
+    .lang-select{padding:6px 10px;border-radius:8px;background:rgba(14,40,100,.5);
+      border:1px solid var(--glass-border);color:var(--text);font-size:.82rem;cursor:pointer;outline:none;}
+
+    /* HERO */
+    .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      text-align:center;padding:100px 24px 40px;}
+    .hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:999px;
+      background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.4);
+      font-size:.78rem;color:var(--cyan);margin-bottom:24px;letter-spacing:.5px;}
+    .pulse{width:7px;height:7px;border-radius:50%;background:var(--cyan);display:inline-block;animation:blink 2s infinite;}
+    @keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+    .hero h1{font-size:clamp(2.2rem,5.5vw,3.8rem);font-weight:800;line-height:1.12;max-width:800px;
+      background:linear-gradient(135deg,#fff 35%,#3b82f6 65%,#06b6d4 100%);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:18px;}
+    .hero p{font-size:1.05rem;color:var(--muted);max-width:580px;line-height:1.7;margin-bottom:32px;}
+    .hero-btns{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;}
+    .btn-primary{padding:13px 30px;border-radius:10px;font-size:.95rem;font-weight:600;
+      background:linear-gradient(135deg,var(--blue2),var(--cyan));color:#fff;border:none;cursor:pointer;transition:transform .2s,opacity .2s;}
+    .btn-primary:hover{transform:translateY(-2px);opacity:.9;}
+    .btn-ghost{padding:13px 30px;border-radius:10px;font-size:.95rem;font-weight:600;
+      background:var(--glass-bg);color:var(--text);border:1px solid var(--glass-border);cursor:pointer;
+      backdrop-filter:blur(8px);transition:background .2s;}
+    .btn-ghost:hover{background:var(--glass-hover);}
+
+    /* STATS */
+    .stats-row{display:flex;flex-wrap:wrap;justify-content:center;margin-top:52px;max-width:840px;width:100%;}
+    .stat{flex:1 1 160px;padding:24px 16px;text-align:center;border-right:1px solid var(--glass-border);}
+    .stat:last-child{border-right:none;}
+    .stat-num{font-size:1.9rem;font-weight:800;background:linear-gradient(135deg,#3b82f6,#06b6d4);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+    .stat-lbl{font-size:.78rem;color:var(--muted);margin-top:3px;}
+
+    /* GLASS CARD */
+    .glass-card{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:18px;
+      backdrop-filter:blur(14px);transition:border-color .25s,background .25s,transform .25s;}
+    .glass-card:hover{border-color:rgba(59,130,246,.65);background:var(--glass-hover);transform:translateY(-3px);}
+
+    /* SECTION */
+    section{padding:80px 24px;max-width:1160px;margin:0 auto;}
+    .sec-tag{font-size:.76rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--cyan);font-weight:600;margin-bottom:10px;}
+    .sec-title{font-size:clamp(1.6rem,3.5vw,2.5rem);font-weight:800;line-height:1.2;margin-bottom:12px;}
+    .sec-sub{font-size:.97rem;color:var(--muted);max-width:520px;line-height:1.7;}
+
+    /* TOPICS GRID */
+    .topics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:40px;}
+    .topic-card{padding:26px 22px;cursor:pointer;position:relative;overflow:hidden;}
+    .topic-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(59,130,246,.08),rgba(6,182,212,.05));
+      opacity:0;transition:opacity .3s;border-radius:18px;}
+    .topic-card:hover::before{opacity:1;}
+    .topic-icon{font-size:2rem;margin-bottom:12px;}
+    .topic-title{font-size:1rem;font-weight:700;margin-bottom:6px;}
+    .topic-desc{font-size:.84rem;color:var(--muted);}
+    .topic-ask{display:inline-block;margin-top:12px;font-size:.78rem;color:var(--cyan);font-weight:600;
+      border-bottom:1px solid rgba(6,182,212,.3);}
+
+    /* MAIN CHAT */
+    #chat-section{padding:80px 24px;max-width:1160px;margin:0 auto;}
+    .chat-layout{display:grid;grid-template-columns:1fr 1.4fr;gap:40px;align-items:start;}
+    .chat-info .sec-sub{margin-top:10px;}
+    .quick-list{list-style:none;margin-top:24px;display:flex;flex-direction:column;gap:10px;}
+    .quick-item{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--muted);}
+    .chk{width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#06b6d4);
+      display:flex;align-items:center;justify-content:center;font-size:.62rem;flex-shrink:0;color:#fff;margin-top:1px;}
+
+    /* CHAT WINDOW */
+    .chat-window{padding:22px;border-radius:20px;display:flex;flex-direction:column;gap:0;}
+    .chat-head{display:flex;align-items:center;gap:10px;padding-bottom:14px;border-bottom:1px solid var(--glass-border);margin-bottom:16px;}
+    .chat-av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#06b6d4);
+      display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:700;color:#fff;flex-shrink:0;}
+    .chat-head-name{font-size:.9rem;font-weight:600;}
+    .chat-head-status{font-size:.72rem;color:var(--cyan);}
+    .chat-lang{margin-left:auto;padding:4px 10px;border-radius:6px;background:rgba(14,40,100,.6);
+      border:1px solid var(--glass-border);color:var(--text);font-size:.75rem;cursor:pointer;outline:none;}
+
+    .messages{display:flex;flex-direction:column;gap:14px;min-height:320px;max-height:420px;overflow-y:auto;
+      padding-right:4px;margin-bottom:16px;}
+    .messages::-webkit-scrollbar{width:4px;}
+    .messages::-webkit-scrollbar-thumb{background:rgba(59,130,246,.3);border-radius:4px;}
+    .msg{display:flex;flex-direction:column;gap:3px;max-width:90%;}
+    .msg.bot{align-self:flex-start;}
+    .msg.user{align-self:flex-end;align-items:flex-end;}
+    .bubble{padding:11px 15px;border-radius:14px;font-size:.86rem;line-height:1.6;}
+    .msg.bot .bubble{background:rgba(37,99,235,.22);border:1px solid rgba(59,130,246,.3);border-bottom-left-radius:4px;}
+    .msg.user .bubble{background:linear-gradient(135deg,rgba(37,99,235,.55),rgba(6,182,212,.45));
+      border:1px solid rgba(6,182,212,.35);border-bottom-right-radius:4px;color:#fff;}
+    .msg-t{font-size:.67rem;color:var(--muted);padding:0 3px;}
+    .typing{display:flex;align-items:center;gap:5px;padding:11px 15px;border-radius:14px;
+      background:rgba(37,99,235,.22);border:1px solid rgba(59,130,246,.3);border-bottom-left-radius:4px;width:fit-content;}
+    .dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);animation:bounce .9s infinite;}
+    .dot:nth-child(2){animation-delay:.18s;}
+    .dot:nth-child(3){animation-delay:.36s;}
+    @keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
+
+    /* QUICK QUESTIONS */
+    .quick-qs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+    .q-chip{padding:6px 13px;border-radius:999px;font-size:.76rem;
+      background:rgba(37,99,235,.18);border:1px solid rgba(59,130,246,.3);
+      color:var(--text);cursor:pointer;transition:background .2s,border-color .2s;}
+    .q-chip:hover{background:rgba(37,99,235,.38);border-color:rgba(59,130,246,.6);}
+
+    /* INPUT ROW */
+    .input-row{display:flex;gap:10px;padding-top:14px;border-top:1px solid var(--glass-border);}
+    .chat-input{flex:1;padding:10px 14px;border-radius:10px;background:rgba(14,40,100,.45);
+      border:1px solid var(--glass-border);color:var(--text);font-size:.86rem;outline:none;font-family:inherit;}
+    .chat-input::placeholder{color:var(--muted);}
+    .chat-input:focus{border-color:rgba(59,130,246,.65);}
+    .send-btn{padding:10px 18px;border-radius:10px;border:none;
+      background:linear-gradient(135deg,var(--blue2),var(--cyan));
+      color:#fff;font-size:.86rem;font-weight:600;cursor:pointer;transition:opacity .2s;white-space:nowrap;}
+    .send-btn:hover{opacity:.85;}
+    .send-btn:disabled{opacity:.45;cursor:not-allowed;}
+
+    /* ALERT / WARNING BANNER */
+    .scam-alert{display:flex;align-items:flex-start;gap:14px;padding:18px 22px;border-radius:14px;
+      background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.35);margin-bottom:20px;}
+    .alert-icon{font-size:1.4rem;flex-shrink:0;}
+    .alert-body h4{font-size:.9rem;font-weight:700;color:#fca5a5;margin-bottom:4px;}
+    .alert-body p{font-size:.82rem;color:var(--muted);line-height:1.55;}
+    .alert-hotline{display:inline-block;margin-top:8px;padding:4px 12px;border-radius:6px;
+      background:rgba(239,68,68,.2);border:1px solid rgba(239,68,68,.4);
+      font-size:.78rem;font-weight:700;color:#fca5a5;}
+
+    /* FINANCIAL TOOLS */
+    .tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px;margin-top:40px;}
+    .tool-card{padding:28px 24px;}
+    .tool-head{display:flex;align-items:center;gap:12px;margin-bottom:18px;}
+    .tool-icon{width:44px;height:44px;border-radius:11px;background:linear-gradient(135deg,rgba(37,99,235,.5),rgba(6,182,212,.4));
+      border:1px solid rgba(59,130,246,.4);display:flex;align-items:center;justify-content:center;font-size:1.2rem;}
+    .tool-name{font-size:1rem;font-weight:700;}
+    .tool-sub{font-size:.78rem;color:var(--muted);}
+
+    /* EMI Calculator */
+    .calc-row{display:flex;flex-direction:column;gap:12px;}
+    .calc-label{font-size:.8rem;color:var(--muted);margin-bottom:3px;display:block;}
+    .calc-input{width:100%;padding:9px 12px;border-radius:8px;background:rgba(14,40,100,.45);
+      border:1px solid var(--glass-border);color:var(--text);font-size:.88rem;outline:none;}
+    .calc-input:focus{border-color:rgba(59,130,246,.65);}
+    .calc-result{margin-top:14px;padding:14px;border-radius:10px;
+      background:rgba(37,99,235,.15);border:1px solid rgba(59,130,246,.3);text-align:center;}
+    .calc-result .big{font-size:1.5rem;font-weight:800;
+      background:linear-gradient(135deg,#3b82f6,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+    .calc-result .small{font-size:.78rem;color:var(--muted);margin-top:3px;}
+    .calc-btn{width:100%;margin-top:10px;padding:10px;border-radius:9px;border:none;cursor:pointer;font-size:.88rem;font-weight:600;
+      background:linear-gradient(135deg,var(--blue2),var(--cyan));color:#fff;transition:opacity .2s;}
+    .calc-btn:hover{opacity:.85;}
+
+    /* Budget Planner */
+    .budget-bars{display:flex;flex-direction:column;gap:10px;margin-top:4px;}
+    .budget-bar-row{display:flex;align-items:center;gap:10px;}
+    .budget-bar-label{font-size:.78rem;color:var(--muted);width:60px;flex-shrink:0;}
+    .budget-bar-track{flex:1;height:8px;border-radius:4px;background:rgba(59,130,246,.15);overflow:hidden;}
+    .budget-bar-fill{height:100%;border-radius:4px;transition:width .5s;}
+    .budget-bar-pct{font-size:.75rem;color:var(--text);width:32px;text-align:right;flex-shrink:0;}
+    .budget-income-row{display:flex;gap:8px;margin-bottom:14px;}
+
+    /* HOW IT WORKS */
+    .steps{display:flex;flex-direction:column;gap:0;margin-top:40px;position:relative;}
+    .steps::before{content:'';position:absolute;left:23px;top:0;bottom:0;width:2px;
+      background:linear-gradient(180deg,#2563eb,#06b6d4);opacity:.4;}
+    .step{display:flex;gap:22px;padding:24px 0;}
+    .step-num{width:48px;height:48px;border-radius:50%;flex-shrink:0;
+      background:linear-gradient(135deg,#1a4fd6,#06b6d4);
+      display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.95rem;color:#fff;
+      border:2px solid rgba(59,130,246,.6);z-index:1;}
+    .step-body h3{font-size:1rem;font-weight:700;margin-bottom:5px;}
+    .step-body p{font-size:.87rem;color:var(--muted);line-height:1.6;}
+
+    /* LANG PILLS */
+    .lang-pills{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px;}
+    .lang-pill{padding:8px 18px;border-radius:999px;font-size:.82rem;font-weight:600;
+      background:var(--glass-bg);border:1px solid var(--glass-border);color:var(--text);cursor:pointer;transition:background .2s,border-color .2s;}
+    .lang-pill:hover,.lang-pill.active{background:rgba(37,99,235,.35);border-color:rgba(59,130,246,.7);color:#fff;}
+
+    /* FOOTER */
+    footer{border-top:1px solid var(--glass-border);padding:36px 40px 26px;
+      display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between;}
+    .footer-logo{font-size:1.05rem;font-weight:800;background:linear-gradient(135deg,#3b82f6,#06b6d4);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+    .footer-links{display:flex;gap:22px;flex-wrap:wrap;}
+    .footer-links a{color:var(--muted);text-decoration:none;font-size:.83rem;transition:color .2s;}
+    .footer-links a:hover{color:#fff;}
+    .footer-copy{font-size:.78rem;color:var(--muted);}
+    .powered{font-size:.75rem;color:var(--muted);display:flex;align-items:center;gap:6px;}
+    .powered span{color:var(--cyan);font-weight:600;}
+
+    /* BACKEND NOTE */
+    .backend-note{display:flex;align-items:center;gap:10px;margin-top:12px;padding:10px 14px;border-radius:10px;
+      background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.3);}
+    .backend-note-icon{font-size:1rem;flex-shrink:0;}
+    .backend-note p{font-size:.78rem;color:#fcd34d;line-height:1.45;}
+    .backend-note code{background:rgba(245,158,11,.15);padding:1px 6px;border-radius:4px;font-size:.76rem;font-family:monospace;}
+
+    /* SAFE-SPEND SIMULATOR */
+    .spend-rows{display:flex;flex-direction:column;gap:10px;}
+    .spend-row{display:flex;align-items:center;gap:10px;}
+    .spend-row label{font-size:.8rem;color:var(--muted);width:110px;flex-shrink:0;}
+    .spend-slider{flex:1;-webkit-appearance:none;height:4px;border-radius:2px;
+      background:linear-gradient(90deg,var(--blue2),var(--cyan));cursor:pointer;outline:none;}
+    .spend-slider::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;
+      background:var(--cyan);border:2px solid #fff;cursor:pointer;}
+    .spend-val{font-size:.82rem;font-weight:700;width:44px;text-align:right;color:var(--text);flex-shrink:0;}
+    .risk-meter{margin-top:18px;padding:14px;border-radius:10px;
+      background:rgba(37,99,235,.12);border:1px solid rgba(59,130,246,.25);text-align:center;}
+    .risk-bar-track{height:10px;border-radius:5px;background:rgba(59,130,246,.15);overflow:hidden;margin:10px 0 6px;}
+    .risk-bar-fill{height:100%;border-radius:5px;transition:width .5s,background .5s;}
+    .risk-label{font-size:.78rem;font-weight:700;letter-spacing:.5px;}
+    .risk-analysis{font-size:.8rem;color:var(--muted);margin-top:8px;line-height:1.5;text-align:left;}
+    .sim-btn{width:100%;margin-top:12px;padding:10px;border-radius:9px;border:none;cursor:pointer;font-size:.88rem;font-weight:600;
+      background:linear-gradient(135deg,var(--blue2),var(--cyan));color:#fff;transition:opacity .2s;}
+    .sim-btn:hover{opacity:.85;}
+
+    /* RESPONSIVE */
+    @media(max-width:900px){
+      .chat-layout{grid-template-columns:1fr;}
+      nav{padding:0 18px;}.nav-links{display:none;}
+    }
+    @media(max-width:600px){
+      .stats-row{flex-direction:column;align-items:stretch;}
+      .stat{border-right:none;border-bottom:1px solid var(--glass-border);}
+      .stat:last-child{border-bottom:none;}
+      footer{flex-direction:column;text-align:center;}
+    }
+  </style>
+</head>
+<body>
+<div class="bg-orbs"><div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div></div>
+<div class="grid-overlay"></div>
+
+<div class="page">
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">FinAI Guider</div>
+  <ul class="nav-links">
+    <li><a href="#topics">Topics</a></li>
+    <li><a href="#chat-section">AI Chat</a></li>
+    <li><a href="#tools">Tools</a></li>
+    <li><a href="#how">How It Works</a></li>
+  </ul>
+  <div class="nav-badge">
+    <span class="ibm-badge">IBM Granite AI</span>
+    <select class="lang-select" id="globalLang" onchange="setGlobalLang(this.value)">
+      <option value="en">🇬🇧 English</option>
+      <option value="hi">🇮🇳 हिंदी</option>
+      <option value="ta">🌺 தமிழ்</option>
+      <option value="te">🌸 తెలుగు</option>
+      <option value="bn">🌿 বাংলা</option>
+      <option value="mr">🦚 मराठी</option>
+    </select>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge"><span class="pulse"></span> Powered by IBM Granite 4 · RAG-Enabled</div>
+  <h1>Your AI Guide to Digital Financial Literacy</h1>
+  <p>Understand UPI, avoid scams, plan budgets, and make smarter financial decisions — in your own language, powered by IBM AI.</p>
+  <div class="hero-btns">
+    <button class="btn-primary" onclick="scrollToChat()">Ask FinAI Now</button>
+    <button class="btn-ghost" onclick="document.getElementById('topics').scrollIntoView({behavior:'smooth'})">Explore Topics</button>
+  </div>
+  <div class="stats-row">
+    <div class="stat"><div class="stat-num">6+</div><div class="stat-lbl">Languages Supported</div></div>
+    <div class="stat"><div class="stat-num">RAG</div><div class="stat-lbl">Knowledge Retrieval</div></div>
+    <div class="stat"><div class="stat-num">1930</div><div class="stat-lbl">Cybercrime Helpline</div></div>
+    <div class="stat"><div class="stat-num">24/7</div><div class="stat-lbl">AI Availability</div></div>
+  </div>
+</div>
+
+<!-- SCAM ALERT BANNER -->
+<div style="max-width:1160px;margin:0 auto;padding:0 24px;">
+  <div class="scam-alert">
+    <div class="alert-icon">🚨</div>
+    <div class="alert-body">
+      <h4>Online Scam Alert — Stay Protected</h4>
+      <p>Banks and RBI <strong>NEVER</strong> ask for your OTP, UPI PIN, or card details over phone or WhatsApp. If you suspect fraud, report immediately.
+      <br><span class="alert-hotline">📞 Cybercrime Helpline: 1930 &nbsp;|&nbsp; cybercrime.gov.in</span></p>
+    </div>
+  </div>
+</div>
+
+<!-- TOPICS -->
+<section id="topics">
+  <div class="sec-tag">Financial Literacy Topics</div>
+  <div class="sec-title">What Would You Like to Learn?</div>
+  <div class="sec-sub">Click any topic to instantly ask the AI about it — powered by IBM Granite RAG with knowledge from RBI, NPCI & government portals.</div>
+  <div class="topics-grid" id="topicsGrid">
+    <!-- Loaded dynamically -->
+    <div class="glass-card topic-card" onclick="askTopic('How do I send money via UPI safely?')">
+      <div class="topic-icon">📱</div>
+      <div class="topic-title">How to Use UPI</div>
+      <div class="topic-desc">Send &amp; receive money safely using BHIM, PhonePe, GPay</div>
+      <span class="topic-ask">Ask AI →</span>
+    </div>
+    <div class="glass-card topic-card" onclick="askTopic('How to avoid online financial scams and fraud in India?')">
+      <div class="topic-icon">🛡️</div>
+      <div class="topic-title">Avoid Online Scams</div>
+      <div class="topic-desc">Protect yourself from UPI fraud, phishing &amp; fake KYC calls</div>
+      <span class="topic-ask">Ask AI →</span>
+    </div>
+    <div class="glass-card topic-card" onclick="askTopic('What is a safe interest rate for a personal loan in India?')">
+      <div class="topic-icon">📊</div>
+      <div class="topic-title">Interest Rates</div>
+      <div class="topic-desc">Understand loan rates, FD returns &amp; what is safe</div>
+      <span class="topic-ask">Ask AI →</span>
+    </div>
+    <div class="glass-card topic-card" onclick="askTopic('How do I create a monthly budget and save money?')">
+      <div class="topic-icon">💰</div>
+      <div class="topic-title">Budget Planning</div>
+      <div class="topic-desc">50/30/20 rule, emergency fund &amp; savings strategies</div>
+      <span class="topic-ask">Ask AI →</span>
+    </div>
+    <div class="glass-card topic-card" onclick="askTopic('How do I start investing in mutual funds via SIP?')">
+      <div class="topic-icon">📈</div>
+      <div class="topic-title">Mutual Funds &amp; SIP</div>
+      <div class="topic-desc">Investment basics, index funds &amp; tax-saving ELSS</div>
+      <span class="topic-ask">Ask AI →</span>
+    </div>
+    <div class="glass-card topic-card" onclick="askTopic('Is cryptocurrency safe to invest in India? What are the risks?')">
+      <div class="topic-icon">₿</div>
+      <div class="topic-title">Crypto Awareness</div>
+      <div class="topic-desc">Risks, tax rules &amp; RBI regulations on digital assets</div>
+      <span class="topic-ask">Ask AI →</span>
+    </div>
+  </div>
+</section>
+
+<!-- CHAT SECTION -->
+<section id="chat-section">
+  <div class="chat-layout">
+    <div class="chat-info">
+      <div class="sec-tag">AI Financial Advisor</div>
+      <div class="sec-title">Ask Anything About Finance</div>
+      <div class="sec-sub">Backed by IBM Granite 4 with RAG — retrieves real answers from RBI, NPCI &amp; government financial portals.</div>
+      <ul class="quick-list">
+        <li class="quick-item"><div class="chk">✓</div>Multilingual — Hindi, Tamil, Telugu, Bengali, Marathi</li>
+        <li class="quick-item"><div class="chk">✓</div>RAG-powered retrieval from trusted financial sources</li>
+        <li class="quick-item"><div class="chk">✓</div>UPI, scam prevention, budgeting &amp; investments</li>
+        <li class="quick-item"><div class="chk">✓</div>Real-time IBM Granite AI responses</li>
+        <li class="quick-item"><div class="chk">✓</div>Culturally inclusive &amp; beginner-friendly</li>
+      </ul>
+      <div style="margin-top:22px;">
+        <div style="font-size:.8rem;color:var(--muted);margin-bottom:10px;">Select language for AI responses:</div>
+        <div class="lang-pills">
+          <div class="lang-pill active" onclick="setLang('en',this)">English</div>
+          <div class="lang-pill" onclick="setLang('hi',this)">हिंदी</div>
+          <div class="lang-pill" onclick="setLang('ta',this)">தமிழ்</div>
+          <div class="lang-pill" onclick="setLang('te',this)">తెలుగు</div>
+          <div class="lang-pill" onclick="setLang('bn',this)">বাংলা</div>
+          <div class="lang-pill" onclick="setLang('mr',this)">मराठी</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHAT WINDOW -->
+    <div class="glass-card chat-window">
+      <div class="chat-head">
+        <div class="chat-av">F</div>
+        <div>
+          <div class="chat-head-name">FinAI – Digital Financial Guide</div>
+          <div class="chat-head-status" id="statusDot">● Online · IBM Granite 4 · RAG Active</div>
+        </div>
+      </div>
+
+      <!-- Quick question chips -->
+      <div class="quick-qs">
+        <div class="q-chip" onclick="sendQuick('How do I send money via UPI?')">UPI Guide</div>
+        <div class="q-chip" onclick="sendQuick('How to avoid UPI scams?')">Avoid Scams</div>
+        <div class="q-chip" onclick="sendQuick('What is a safe loan interest rate?')">Loan Rates</div>
+        <div class="q-chip" onclick="sendQuick('How to start a SIP investment?')">Start SIP</div>
+        <div class="q-chip" onclick="sendQuick('Create a monthly budget plan for me')">Budget Plan</div>
+      </div>
+
+      <div class="messages" id="messages">
+        <div class="msg bot">
+          <div class="bubble">Namaste! 🙏 I'm FinAI — your Digital Financial Literacy AI Agent powered by IBM Granite. I can help you with:<br><br>
+          📱 <strong>UPI payments</strong> — how to send, receive &amp; stay safe<br>
+          🛡️ <strong>Scam prevention</strong> — identify &amp; avoid online fraud<br>
+          📊 <strong>Interest rates</strong> — understand loans &amp; safe returns<br>
+          💰 <strong>Budgeting</strong> — plan your monthly finances<br>
+          📈 <strong>Investments</strong> — mutual funds, SIP, ELSS<br><br>
+          Ask me anything in English, Hindi, Tamil, Telugu, Bengali or Marathi!</div>
+          <div class="msg-t">FinAI · Just now</div>
+        </div>
+      </div>
+
+      <div class="input-row">
+        <input class="chat-input" id="chatInput" type="text"
+          placeholder="Ask e.g. 'How do I send money via UPI?' or type in Hindi…"
+          onkeydown="if(event.key==='Enter')sendMessage()"/>
+        <button class="send-btn" id="sendBtn" onclick="sendMessage()">Send ↗</button>
+      </div>
+      <!-- BACKEND NOTE -->
+      <div class="backend-note">
+        <div class="backend-note-icon">⚡</div>
+        <p data-i18n="backendNote">IBM Granite AI responses are active and ready.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINANCIAL TOOLS -->
+<section id="tools">
+  <div class="sec-tag">Interactive Tools</div>
+  <div class="sec-title">Financial Calculators</div>
+  <div class="sec-sub">Use these tools to make informed financial decisions instantly.</div>
+  <div class="tools-grid">
+
+    <!-- EMI Calculator -->
+    <div class="glass-card tool-card">
+      <div class="tool-head">
+        <div class="tool-icon">🧮</div>
+        <div><div class="tool-name">EMI Calculator</div><div class="tool-sub">Loan repayment planner</div></div>
+      </div>
+      <div class="calc-row">
+        <div><label class="calc-label">Principal Amount (₹)</label><input class="calc-input" id="emiPrincipal" type="number" placeholder="500000" value="500000"/></div>
+        <div><label class="calc-label">Annual Interest Rate (%)</label><input class="calc-input" id="emiRate" type="number" placeholder="10.5" value="10.5" step="0.1"/></div>
+        <div><label class="calc-label">Tenure (Months)</label><input class="calc-input" id="emiMonths" type="number" placeholder="60" value="60"/></div>
+      </div>
+      <button class="calc-btn" onclick="calcEMI()">Calculate EMI</button>
+      <div class="calc-result" id="emiResult">
+        <div class="big" id="emiAmt">₹10,747</div>
+        <div class="small">Monthly EMI &nbsp;|&nbsp; Total Interest: <span id="emiInterest">₹1,44,820</span></div>
+      </div>
+    </div>
+
+    <!-- Budget Planner -->
+    <div class="glass-card tool-card">
+      <div class="tool-head">
+        <div class="tool-icon">💰</div>
+        <div><div class="tool-name">50/30/20 Budget Planner</div><div class="tool-sub">Monthly allocation guide</div></div>
+      </div>
+      <div class="budget-income-row">
+        <input class="calc-input" id="incomeInput" type="number" placeholder="Monthly income ₹" oninput="calcBudget()"/>
+        <button class="calc-btn" style="width:auto;padding:9px 16px;margin:0;" onclick="calcBudget()">Plan</button>
+      </div>
+      <div class="budget-bars">
+        <div class="budget-bar-row">
+          <div class="budget-bar-label">Needs 50%</div>
+          <div class="budget-bar-track"><div class="budget-bar-fill" id="bar-needs" style="width:50%;background:linear-gradient(90deg,#2563eb,#3b82f6);"></div></div>
+          <div class="budget-bar-pct" id="amt-needs">—</div>
+        </div>
+        <div class="budget-bar-row">
+          <div class="budget-bar-label">Wants 30%</div>
+          <div class="budget-bar-track"><div class="budget-bar-fill" id="bar-wants" style="width:30%;background:linear-gradient(90deg,#06b6d4,#67e8f9);"></div></div>
+          <div class="budget-bar-pct" id="amt-wants">—</div>
+        </div>
+        <div class="budget-bar-row">
+          <div class="budget-bar-label">Save 20%</div>
+          <div class="budget-bar-track"><div class="budget-bar-fill" id="bar-save" style="width:20%;background:linear-gradient(90deg,#10b981,#34d399);"></div></div>
+          <div class="budget-bar-pct" id="amt-save">—</div>
+        </div>
+      </div>
+      <div class="calc-result" style="margin-top:14px;">
+        <div class="small" id="budgetTip">Enter your monthly income to see your personalised budget breakdown.</div>
+      </div>
+    </div>
+
+    <!-- SIP Calculator -->
+    <div class="glass-card tool-card">
+      <div class="tool-head">
+        <div class="tool-icon">📈</div>
+        <div><div class="tool-name">SIP Returns Calculator</div><div class="tool-sub">Mutual fund growth estimator</div></div>
+      </div>
+      <div class="calc-row">
+        <div><label class="calc-label">Monthly SIP Amount (₹)</label><input class="calc-input" id="sipAmount" type="number" placeholder="5000" value="5000"/></div>
+        <div><label class="calc-label">Expected Annual Return (%)</label><input class="calc-input" id="sipReturn" type="number" placeholder="12" value="12" step="0.5"/></div>
+        <div><label class="calc-label">Investment Period (Years)</label><input class="calc-input" id="sipYears" type="number" placeholder="10" value="10"/></div>
+      </div>
+      <button class="calc-btn" onclick="calcSIP()">Calculate Returns</button>
+      <div class="calc-result" id="sipResult">
+        <div class="big" id="sipCorpus">₹11.62 L</div>
+        <div class="small">Estimated corpus &nbsp;|&nbsp; Invested: <span id="sipInvested">₹6.00 L</span></div>
+      </div>
+    </div>
+
+    <!-- Safe-Spend Simulator -->
+    <div class="glass-card tool-card">
+      <div class="tool-head">
+        <div class="tool-icon">🎯</div>
+        <div><div class="tool-name" data-i18n="simTitle">Safe-Spend Simulator</div><div class="tool-sub" data-i18n="simSub">AI risk analysis on your spending plan</div></div>
+      </div>
+      <div class="spend-rows">
+        <div class="spend-row">
+          <label data-i18n="simRent">Rent / EMI %</label>
+          <input class="spend-slider" id="slRent" type="range" min="0" max="60" value="30" oninput="updateSim()"/>
+          <div class="spend-val" id="vlRent">30%</div>
+        </div>
+        <div class="spend-row">
+          <label data-i18n="simFood">Food %</label>
+          <input class="spend-slider" id="slFood" type="range" min="0" max="40" value="15" oninput="updateSim()"/>
+          <div class="spend-val" id="vlFood">15%</div>
+        </div>
+        <div class="spend-row">
+          <label data-i18n="simEntertain">Entertainment %</label>
+          <input class="spend-slider" id="slEnt" type="range" min="0" max="40" value="10" oninput="updateSim()"/>
+          <div class="spend-val" id="vlEnt">10%</div>
+        </div>
+        <div class="spend-row">
+          <label data-i18n="simSavings">Savings %</label>
+          <input class="spend-slider" id="slSave" type="range" min="0" max="50" value="20" oninput="updateSim()"/>
+          <div class="spend-val" id="vlSave">20%</div>
+        </div>
+      </div>
+      <div class="risk-meter">
+        <div class="risk-bar-track"><div class="risk-bar-fill" id="riskFill" style="width:25%;"></div></div>
+        <div class="risk-label" id="riskLabel">🟢 LOW RISK</div>
+        <div class="risk-analysis" id="riskAnalysis">Adjust sliders to see AI risk analysis of your spending plan.</div>
+      </div>
+      <button class="sim-btn" onclick="askSimAI()" data-i18n="simAsk">Ask AI for Full Analysis ↗</button>
+    </div>
+
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div style="max-width:600px;">
+    <div class="sec-tag">Technology</div>
+    <div class="sec-title">How FinAI RAG Works</div>
+    <div class="sec-sub">Our IBM Granite-powered RAG pipeline retrieves verified financial knowledge and generates personalised answers.</div>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body"><h3>User Asks a Question</h3><p>Type your financial question in any supported language. The system detects intent and relevant topic areas.</p></div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body"><h3>RAG Knowledge Retrieval</h3><p>Relevant content is retrieved from our knowledge base — sourced from RBI, NPCI, SEBI, cybercrime.gov.in &amp; banking portals.</p></div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body"><h3>IBM Granite AI Generation</h3><p>IBM Granite 4 (ibm/granite-4-h-small) generates a grounded, accurate response using only retrieved context — no hallucinations.</p></div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body"><h3>Personalised &amp; Multilingual Answer</h3><p>The answer is returned in your preferred language — clear, actionable, culturally appropriate, and beginner-friendly.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">FinAI Guider</div>
+  <div class="footer-links">
+    <a href="https://cybercrime.gov.in" target="_blank">Cybercrime Portal</a>
+    <a href="https://rbi.org.in" target="_blank">RBI</a>
+    <a href="https://npci.org.in" target="_blank">NPCI</a>
+    <a href="https://sebi.gov.in" target="_blank">SEBI</a>
+    <a href="https://bhimupi.org.in" target="_blank">BHIM UPI</a>
+  </div>
+  <div class="powered">Powered by <span>IBM Granite 4</span> · Problem Statement #7</div>
+  <div class="footer-copy">© 2025 FinAI Guider. For educational purposes. Not financial advice.</div>
+</footer>
+
+</div><!-- /page -->
+
+<!-- IBM Watson Assistant Chat Widget -->
+<script>
+  window.watsonAssistantChatOptions = {
+    integrationID: "f682f0de-3342-4f0c-be43-2e9dc13933e4",
+    region: "https://integrations.au-syd.assistant.watson.appdomain.cloud",
+    serviceInstanceID: "f56040a4-3a8e-4c65-8440-4c0a4c00f5cd",
+    onLoad: async (instance) => { await instance.render(); }
+  };
+  setTimeout(function(){
+    const t=document.createElement('script');
+    t.src="https://web-chat.global.assistant.watson.appdomain.cloud/versions/" + (window.watsonAssistantChatOptions.clientVersion || 'latest') + "/WatsonAssistantChatEntry.js";
+    document.head.appendChild(t);
+  });
+</script>
+
+<!-- APP LOGIC -->
+<script>
+  // ── STATE ────────────────────────────────────────────────────────────────
+  let currentLang = 'en';
+  const BACKEND = 'http://localhost:3000';
+
+  // ── UI TRANSLATIONS ───────────────────────────────────────────────────────
+  const UI_STRINGS = {
+    en: {
+      heroTitle:    'Your AI Guide to Digital Financial Literacy',
+      heroSub:      'Understand UPI, avoid scams, plan budgets, and make smarter financial decisions — in your own language, powered by IBM AI.',
+      heroBtn1:     'Ask FinAI Now', heroBtn2: 'Explore Topics',
+      statLbl1:'Languages Supported',statLbl2:'Knowledge Retrieval',statLbl3:'Cybercrime Helpline',statLbl4:'AI Availability',
+      alertTitle:   'Online Scam Alert — Stay Protected',
+      alertBody:    'Banks and RBI <strong>NEVER</strong> ask for your OTP, UPI PIN, or card details over phone or WhatsApp. If you suspect fraud, report immediately.',
+      topicsTag:    'Financial Literacy Topics', topicsTitle: 'What Would You Like to Learn?',
+      topicsSub:    'Click any topic to instantly ask the AI about it — powered by IBM Granite RAG with knowledge from RBI, NPCI & government portals.',
+      chatTag:      'AI Financial Advisor', chatTitle: 'Ask Anything About Finance',
+      chatSub:      'Backed by IBM Granite 4 with RAG — retrieves real answers from RBI, NPCI & government financial portals.',
+      toolsTag:     'Interactive Tools', toolsTitle: 'Financial Calculators',
+      toolsSub:     'Use these tools to make informed financial decisions instantly.',
+      howTag:       'Technology', howTitle: 'How FinAI RAG Works',
+      howSub:       'Our IBM Granite-powered RAG pipeline retrieves verified financial knowledge and generates personalised answers.',
+      backendNote:  'IBM Granite AI responses are active and ready.',
+      langPrompt:   'Select language for AI responses:',
+      simTitle:     'Safe-Spend Simulator', simSub: 'AI risk analysis on your spending plan',
+      simRent:      'Rent / EMI %', simFood: 'Food %', simEntertain: 'Entertainment %', simSavings: 'Savings %',
+      simAsk:       'Ask AI for Full Analysis ↗',
+      placeholder:  "Ask e.g. 'How do I send money via UPI?' or type in Hindi…",
+      navTopics:'Topics',navChat:'AI Chat',navTools:'Tools',navHow:'How It Works'
+    },
+    hi: {
+      heroTitle:    'डिजिटल वित्तीय साक्षरता के लिए आपका AI गाइड',
+      heroSub:      'UPI समझें, धोखाधड़ी से बचें, बजट बनाएं — अपनी भाषा में, IBM AI द्वारा संचालित।',
+      heroBtn1:     'FinAI से पूछें', heroBtn2: 'विषय देखें',
+      statLbl1:'भाषाएं समर्थित',statLbl2:'नॉलेज रिट्रीवल',statLbl3:'साइबर अपराध हेल्पलाइन',statLbl4:'AI उपलब्धता',
+      alertTitle:   'ऑनलाइन धोखाधड़ी अलर्ट — सुरक्षित रहें',
+      alertBody:    'बैंक और RBI कभी भी फोन या WhatsApp पर OTP, UPI PIN या कार्ड विवरण नहीं मांगते। यदि धोखाधड़ी का संदेह हो, तुरंत रिपोर्ट करें।',
+      topicsTag:    'वित्तीय साक्षरता विषय', topicsTitle: 'आप क्या सीखना चाहते हैं?',
+      topicsSub:    'किसी भी विषय पर क्लिक करें और AI से तुरंत पूछें — RBI, NPCI और सरकारी पोर्टल से ज्ञान।',
+      chatTag:      'AI वित्तीय सलाहकार', chatTitle: 'वित्त के बारे में कुछ भी पूछें',
+      chatSub:      'IBM Granite 4 द्वारा RAG के साथ — RBI, NPCI से वास्तविक उत्तर प्राप्त करें।',
+      toolsTag:     'इंटरैक्टिव टूल्स', toolsTitle: 'वित्तीय कैलकुलेटर',
+      toolsSub:     'तुरंत सूचित वित्तीय निर्णय लेने के लिए इन टूल्स का उपयोग करें।',
+      howTag:       'प्रौद्योगिकी', howTitle: 'FinAI RAG कैसे काम करता है',
+      howSub:       'हमारी IBM Granite RAG पाइपलाइन सत्यापित वित्तीय ज्ञान प्राप्त करती है।',
+      backendNote:  'IBM Granite AI उत्तर सक्रिय हैं और तैयार हैं।',
+      langPrompt:   'AI उत्तरों के लिए भाषा चुनें:',
+      simTitle:     'सुरक्षित खर्च सिमुलेटर', simSub: 'आपकी खर्च योजना पर AI जोखिम विश्लेषण',
+      simRent:      'किराया / EMI %', simFood: 'भोजन %', simEntertain: 'मनोरंजन %', simSavings: 'बचत %',
+      simAsk:       'AI से पूर्ण विश्लेषण करें ↗',
+      placeholder:  'जैसे "UPI से पैसे कैसे भेजें?" या हिंदी में लिखें…',
+      navTopics:'विषय',navChat:'AI चैट',navTools:'टूल्स',navHow:'कैसे काम करता है'
+    },
+    ta: {
+      heroTitle:    'டிஜிட்டல் நிதி கல்விக்கான உங்கள் AI வழிகாட்டி',
+      heroSub:      'UPI புரிந்துகொள்ளுங்கள், மோசடிகளைத் தவிர்க்கவும், IBM AI மூலம் உங்கள் மொழியில் நிதி முடிவுகள் எடுங்கள்.',
+      heroBtn1:     'FinAI-ஐ கேளுங்கள்', heroBtn2: 'தலைப்புகளை ஆராயுங்கள்',
+      statLbl1:'மொழிகள்',statLbl2:'அறிவு மீட்டெடுப்பு',statLbl3:'சைபர் கிரைம் உதவி',statLbl4:'AI கிடைக்கும்',
+      alertTitle:   'ஆன்லைன் மோசடி எச்சரிக்கை',
+      alertBody:    'வங்கிகள் மற்றும் RBI எப்போதும் OTP, UPI PIN கேட்பதில்லை. ஐயம் இருந்தால் உடனே புகார் செய்யுங்கள்.',
+      topicsTag:    'நிதி கல்வி தலைப்புகள்', topicsTitle: 'நீங்கள் என்ன கற்க விரும்புகிறீர்கள்?',
+      topicsSub:    'எந்த தலைப்பையும் கிளிக் செய்து AI-ஐ கேளுங்கள் — RBI, NPCI ஆதாரங்களிலிருந்து.',
+      chatTag:      'AI நிதி ஆலோசகர்', chatTitle: 'நிதி பற்றி எதுவும் கேளுங்கள்',
+      chatSub:      'IBM Granite 4 RAG மூலம் RBI, NPCI இலிருந்து உண்மையான பதில்கள்.',
+      toolsTag:     'ஊடாடும் கருவிகள்', toolsTitle: 'நிதி கணக்கீட்டாளர்கள்',
+      toolsSub:     'உடனடி நிதி முடிவுகளுக்கு இந்த கருவிகளைப் பயன்படுத்தவும்.',
+      howTag:       'தொழில்நுட்பம்', howTitle: 'FinAI RAG எப்படி வேலை செய்கிறது',
+      howSub:       'IBM Granite RAG குழாய்வழி சரிபார்க்கப்பட்ட நிதி அறிவை மீட்டெடுக்கிறது.',
+      backendNote:  'IBM Granite AI பதில்கள் செயல்பாட்டில் உள்ளன மற்றும் தயார்.',
+      langPrompt:   'AI பதில்களுக்கு மொழியைத் தேர்ந்தெடுக்கவும்:',
+      simTitle:     'பாதுகாப்பான செலவு சிமுலேட்டர்', simSub: 'உங்கள் செலவு திட்டத்தில் AI ஆபத்து பகுப்பாய்வு',
+      simRent:      'வாடகை / EMI %', simFood: 'உணவு %', simEntertain: 'பொழுதுபோக்கு %', simSavings: 'சேமிப்பு %',
+      simAsk:       'AI முழு பகுப்பாய்வு கேளுங்கள் ↗',
+      placeholder:  '"UPI மூலம் பணம் எப்படி அனுப்புவது?" என கேளுங்கள்…',
+      navTopics:'தலைப்புகள்',navChat:'AI அரட்டை',navTools:'கருவிகள்',navHow:'எப்படி வேலை செய்கிறது'
+    },
+    te: {
+      heroTitle:    'డిజిటల్ ఆర్థిక అక్షరాస్యత కోసం మీ AI గైడ్',
+      heroSub:      'UPI అర్థం చేసుకోండి, మోసాలు నివారించండి — మీ భాషలో IBM AI ద్వారా.',
+      heroBtn1:     'FinAI అడగండి', heroBtn2: 'అంశాలు చూడండి',
+      statLbl1:'భాషలు',statLbl2:'జ్ఞాన పునరుద్ధరణ',statLbl3:'సైబర్ క్రైమ్ హెల్ప్‌లైన్',statLbl4:'AI లభ్యత',
+      alertTitle:   'ఆన్‌లైన్ మోసం హెచ్చరిక',
+      alertBody:    'బ్యాంకులు మరియు RBI ఎన్నడూ OTP, UPI PIN అడగవు. మోసం అనుమానమైతే వెంటనే రిపోర్ట్ చేయండి.',
+      topicsTag:    'ఆర్థిక అక్షరాస్యత అంశాలు', topicsTitle: 'మీరు ఏమి నేర్చుకోవాలనుకుంటున్నారు?',
+      topicsSub:    'ఏ అంశంపైనైనా క్లిక్ చేసి AI ని అడగండి — RBI, NPCI మూలాల నుండి.',
+      chatTag:      'AI ఆర్థిక సలహాదారు', chatTitle: 'ఆర్థికం గురించి ఏదైనా అడగండి',
+      chatSub:      'IBM Granite 4 RAG తో RBI, NPCI నుండి నిజమైన సమాధానాలు.',
+      toolsTag:     'ఇంటరాక్టివ్ టూల్స్', toolsTitle: 'ఆర్థిక కాలిక్యులేటర్లు',
+      toolsSub:     'తక్షణ ఆర్థిక నిర్ణయాలకు ఈ టూల్స్ వాడండి.',
+      howTag:       'సాంకేతికత', howTitle: 'FinAI RAG ఎలా పని చేస్తుంది',
+      howSub:       'IBM Granite RAG పైప్‌లైన్ ధృవీకరించబడిన ఆర్థిక జ్ఞానాన్ని తిరిగి పొందుతుంది.',
+      backendNote:  'IBM Granite AI సమాధానాలు సక్రియంగా ఉన్నాయి మరియు సిద్ధంగా ఉన్నాయి.',
+      langPrompt:   'AI సమాధానాలకు భాష ఎంచుకోండి:',
+      simTitle:     'సురక్షిత వ్యయ సిమ్యులేటర్', simSub: 'మీ వ్యయ ప్రణాళికపై AI ప్రమాద విశ్లేషణ',
+      simRent:      'అద్దె / EMI %', simFood: 'ఆహారం %', simEntertain: 'వినోదం %', simSavings: 'పొదుపు %',
+      simAsk:       'AI పూర్తి విశ్లేషణ అడగండి ↗',
+      placeholder:  '"UPI ద్వారా డబ్బు ఎలా పంపాలి?" అని అడగండి…',
+      navTopics:'అంశాలు',navChat:'AI చాట్',navTools:'టూల్స్',navHow:'ఎలా పని చేస్తుంది'
+    },
+    bn: {
+      heroTitle:    'ডিজিটাল আর্থিক সাক্ষরতার জন্য আপনার AI গাইড',
+      heroSub:      'UPI বুঝুন, স্ক্যাম এড়ান, বাজেট পরিকল্পনা করুন — আপনার ভাষায়, IBM AI দ্বারা চালিত।',
+      heroBtn1:     'FinAI-কে জিজ্ঞেস করুন', heroBtn2: 'বিষয়গুলি অন্বেষণ করুন',
+      statLbl1:'ভাষা সমর্থিত',statLbl2:'জ্ঞান পুনরুদ্ধার',statLbl3:'সাইবার ক্রাইম হেল্পলাইন',statLbl4:'AI প্রাপ্যতা',
+      alertTitle:   'অনলাইন স্ক্যাম সতর্কতা',
+      alertBody:    'ব্যাংক এবং RBI কখনও OTP, UPI PIN চায় না। প্রতারণার সন্দেহ হলে অবিলম্বে রিপোর্ট করুন।',
+      topicsTag:    'আর্থিক সাক্ষরতার বিষয়', topicsTitle: 'আপনি কী শিখতে চান?',
+      topicsSub:    'যেকোনো বিষয়ে ক্লিক করুন এবং AI-কে জিজ্ঞেস করুন — RBI, NPCI উৎস থেকে।',
+      chatTag:      'AI আর্থিক উপদেষ্টা', chatTitle: 'অর্থ সম্পর্কে যেকোনো প্রশ্ন করুন',
+      chatSub:      'IBM Granite 4 RAG সহ RBI, NPCI থেকে প্রকৃত উত্তর।',
+      toolsTag:     'ইন্টারেক্টিভ টুলস', toolsTitle: 'আর্থিক ক্যালকুলেটর',
+      toolsSub:     'তাৎক্ষণিক আর্থিক সিদ্ধান্তের জন্য এই টুলগুলি ব্যবহার করুন।',
+      howTag:       'প্রযুক্তি', howTitle: 'FinAI RAG কীভাবে কাজ করে',
+      howSub:       'IBM Granite RAG পাইপলাইন যাচাইকৃত আর্থিক জ্ঞান পুনরুদ্ধার করে।',
+      backendNote:  'IBM Granite AI উত্তর সক্রিয় এবং প্রস্তুত।',
+      langPrompt:   'AI উত্তরের জন্য ভাষা নির্বাচন করুন:',
+      simTitle:     'নিরাপদ ব্যয় সিমুলেটর', simSub: 'আপনার ব্যয় পরিকল্পনায় AI ঝুঁকি বিশ্লেষণ',
+      simRent:      'ভাড়া / EMI %', simFood: 'খাবার %', simEntertain: 'বিনোদন %', simSavings: 'সঞ্চয় %',
+      simAsk:       'AI-কে সম্পূর্ণ বিশ্লেষণের জন্য জিজ্ঞেস করুন ↗',
+      placeholder:  '"UPI-তে টাকা কীভাবে পাঠাবো?" জিজ্ঞেস করুন…',
+      navTopics:'বিষয়',navChat:'AI চ্যাট',navTools:'টুলস',navHow:'কীভাবে কাজ করে'
+    },
+    mr: {
+      heroTitle:    'डिजिटल आर्थिक साक्षरतेसाठी तुमचा AI मार्गदर्शक',
+      heroSub:      'UPI समजा, फसवणूक टाळा, बजेट तयार करा — तुमच्या भाषेत, IBM AI द्वारे चालवलेले।',
+      heroBtn1:     'FinAI ला विचारा', heroBtn2: 'विषय शोधा',
+      statLbl1:'भाषा समर्थित',statLbl2:'ज्ञान पुनर्प्राप्ती',statLbl3:'सायबर गुन्हे हेल्पलाइन',statLbl4:'AI उपलब्धता',
+      alertTitle:   'ऑनलाइन फसवणूक सतर्कता',
+      alertBody:    'बँका आणि RBI कधीही OTP, UPI PIN मागत नाहीत. फसवणुकीचा संशय असल्यास तत्काळ रिपोर्ट करा।',
+      topicsTag:    'आर्थिक साक्षरता विषय', topicsTitle: 'तुम्हाला काय शिकायचे आहे?',
+      topicsSub:    'कोणत्याही विषयावर क्लिक करा आणि AI ला विचारा — RBI, NPCI स्त्रोतांकडून।',
+      chatTag:      'AI आर्थिक सल्लागार', chatTitle: 'वित्त विषयी काहीही विचारा',
+      chatSub:      'IBM Granite 4 RAG सह RBI, NPCI कडून खरी उत्तरे।',
+      toolsTag:     'परस्परसंवादी साधने', toolsTitle: 'आर्थिक कॅल्क्युलेटर',
+      toolsSub:     'तात्काळ आर्थिक निर्णयांसाठी ही साधने वापरा।',
+      howTag:       'तंत्रज्ञान', howTitle: 'FinAI RAG कसे कार्य करते',
+      howSub:       'IBM Granite RAG पाइपलाइन सत्यापित आर्थिक ज्ञान पुनर्प्राप्त करते।',
+      backendNote:  'IBM Granite AI उत्तरे सक्रिय आणि तयार आहेत.',
+      langPrompt:   'AI उत्तरांसाठी भाषा निवडा:',
+      simTitle:     'सुरक्षित खर्च सिम्युलेटर', simSub: 'तुमच्या खर्चाच्या योजनेवर AI जोखीम विश्लेषण',
+      simRent:      'भाडे / EMI %', simFood: 'अन्न %', simEntertain: 'मनोरंजन %', simSavings: 'बचत %',
+      simAsk:       'AI कडून पूर्ण विश्लेषण विचारा ↗',
+      placeholder:  '"UPI द्वारे पैसे कसे पाठवायचे?" विचारा…',
+      navTopics:'विषय',navChat:'AI चॅट',navTools:'साधने',navHow:'कसे कार्य करते'
+    }
+  };
+
+  // Apply full-page UI translation
+  function applyTranslation(lang) {
+    const t = UI_STRINGS[lang] || UI_STRINGS.en;
+    // Helper: set innerHTML of first element matching selector
+    const set = (sel, val) => { const el = document.querySelector(sel); if(el) el.innerHTML = val; };
+    const setText = (sel, val) => { const el = document.querySelector(sel); if(el) el.textContent = val; };
+
+    // Hero
+    set('.hero h1', t.heroTitle);
+    set('.hero p', t.heroSub);
+    set('.hero-btns .btn-primary', t.heroBtn1);
+    set('.hero-btns .btn-ghost', t.heroBtn2);
+    document.querySelectorAll('.stat-lbl')[0].textContent = t.statLbl1;
+    document.querySelectorAll('.stat-lbl')[1].textContent = t.statLbl2;
+    document.querySelectorAll('.stat-lbl')[2].textContent = t.statLbl3;
+    document.querySelectorAll('.stat-lbl')[3].textContent = t.statLbl4;
+    // Alert
+    set('.alert-body h4', t.alertTitle);
+    const alertP = document.querySelector('.alert-body p');
+    if (alertP) {
+      const hl = alertP.querySelector('.alert-hotline');
+      alertP.innerHTML = t.alertBody + '<br>' + (hl ? hl.outerHTML : '');
+    }
+    // Topics section
+    set('#topics .sec-tag', t.topicsTag);
+    set('#topics .sec-title', t.topicsTitle);
+    set('#topics .sec-sub', t.topicsSub);
+    // Chat section
+    set('#chat-section .sec-tag', t.chatTag);
+    set('#chat-section .sec-title', t.chatTitle);
+    set('#chat-section .sec-sub', t.chatSub);
+    set('#chat-section .backend-note p', t.backendNote);
+    const lp = document.querySelector('#chat-section [style*="color:var(--muted)"]');
+    if(lp) lp.textContent = t.langPrompt;
+    // Tools section
+    set('#tools .sec-tag', t.toolsTag);
+    set('#tools .sec-title', t.toolsTitle);
+    set('#tools .sec-sub', t.toolsSub);
+    // How section
+    set('#how .sec-tag', t.howTag);
+    set('#how .sec-title', t.howTitle);
+    set('#how .sec-sub', t.howSub);
+    // Simulator card
+    set('[data-i18n="simTitle"]', t.simTitle);
+    set('[data-i18n="simSub"]', t.simSub);
+    set('[data-i18n="simRent"]', t.simRent);
+    set('[data-i18n="simFood"]', t.simFood);
+    set('[data-i18n="simEntertain"]', t.simEntertain);
+    set('[data-i18n="simSavings"]', t.simSavings);
+    set('[data-i18n="simAsk"]', t.simAsk);
+    // Nav
+    const navAs = document.querySelectorAll('.nav-links a');
+    if(navAs[0]) navAs[0].textContent = t.navTopics;
+    if(navAs[1]) navAs[1].textContent = t.navChat;
+    if(navAs[2]) navAs[2].textContent = t.navTools;
+    if(navAs[3]) navAs[3].textContent = t.navHow;
+    // Input placeholder
+    const inp = document.getElementById('chatInput');
+    if(inp) inp.placeholder = t.placeholder;
+    // Update sim risk analysis text language
+    updateSim();
+  }
+
+  // ── LANG ─────────────────────────────────────────────────────────────────
+  function setLang(lang, el) {
+    currentLang = lang;
+    document.querySelectorAll('.lang-pill').forEach(p => p.classList.remove('active'));
+    if (el) el.classList.add('active');
+    const globalSel = document.getElementById('globalLang');
+    if (globalSel) globalSel.value = lang;
+    applyTranslation(lang);
+  }
+
+  function setGlobalLang(lang) {
+    currentLang = lang;
+    document.querySelectorAll('.lang-pill').forEach(p => {
+      p.classList.toggle('active', p.textContent.trim().startsWith(
+        lang === 'en' ? 'En' : lang === 'hi' ? 'हि' : lang === 'ta' ? 'த' :
+        lang === 'te' ? 'తె' : lang === 'bn' ? 'বা' : 'म'
+      ));
+    });
+    applyTranslation(lang);
+  }
+
+  // ── SCROLL ───────────────────────────────────────────────────────────────
+  function scrollToChat() {
+    document.getElementById('chat-section').scrollIntoView({ behavior: 'smooth' });
+    setTimeout(() => document.getElementById('chatInput').focus(), 600);
+  }
+
+  // ── TIME ─────────────────────────────────────────────────────────────────
+  function now() {
+    return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
+
+  // ── APPEND MESSAGE ────────────────────────────────────────────────────────
+  function appendMsg(role, text) {
+    const box = document.getElementById('messages');
+    const div = document.createElement('div');
+    div.className = `msg ${role}`;
+    div.innerHTML = `<div class="bubble">${text}</div><div class="msg-t">${role === 'bot' ? 'FinAI' : 'You'} · ${now()}</div>`;
+    box.appendChild(div);
+    box.scrollTop = box.scrollHeight;
+    return div;
+  }
+
+  function showTyping() {
+    const box = document.getElementById('messages');
+    const div = document.createElement('div');
+    div.className = 'msg bot';
+    div.id = 'typing-indicator';
+    div.innerHTML = `<div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
+    box.appendChild(div);
+    box.scrollTop = box.scrollHeight;
+  }
+
+  function removeTyping() {
+    const t = document.getElementById('typing-indicator');
+    if (t) t.remove();
+  }
+
+  // ── SEND MESSAGE ──────────────────────────────────────────────────────────
+  async function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const msg = input.value.trim();
+    if (!msg) return;
+
+    input.value = '';
+    appendMsg('user', msg);
+
+    const btn = document.getElementById('sendBtn');
+    btn.disabled = true;
+    document.getElementById('statusDot').textContent = '● Thinking · IBM Granite...';
+    showTyping();
+
+    try {
+      const res = await fetch(`${BACKEND}/api/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: msg, language: currentLang })
+      });
+      removeTyping();
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+
+      if (data.error) throw new Error(data.error);
+      appendMsg('bot', formatResponse(data.reply));
+    } catch(e) {
+      removeTyping();
+      const fallback = localFallback(msg);
+      appendMsg('bot', fallback);
+    }
+
+    btn.disabled = false;
+    document.getElementById('statusDot').textContent = '● Online · IBM Granite 4 · RAG Active';
+  }
+
+  // ── FORMAT RESPONSE ───────────────────────────────────────────────────────
+  function formatResponse(text) {
+    return text
+      .replace(/\n/g, '<br>')
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/^(\d+)\./gm, '<br>$1.');
+  }
+
+  // ── LOCAL FALLBACK ────────────────────────────────────────────────────────
+  const fallbackMap = {
+    upi:      '📱 <strong>UPI Guide:</strong><br>1. Open your UPI app (PhonePe / GPay / BHIM)<br>2. Enter recipient UPI ID or mobile number<br>3. Enter amount and confirm<br>4. Enter your 4-6 digit UPI PIN — <strong>never share this with anyone</strong><br>5. Done! Transaction limit is ₹1 lakh/transaction.<br><br>⚠️ RBI never calls to ask for your UPI PIN.',
+    scam:     '🛡️ <strong>Scam Prevention Tips:</strong><br>1. <strong>Never</strong> share OTP, PIN or card details over phone<br>2. Banks do KYC at branches, NOT via WhatsApp<br>3. "Too good to be true" returns = scam<br>4. Always verify website URLs (check https://)<br>5. Urgency/pressure tactics = red flag<br><br>📞 <strong>Report fraud: Cybercrime Helpline 1930</strong> | cybercrime.gov.in',
+    interest: '📊 <strong>Safe Interest Rates (India):</strong><br>• Personal loans: 10-18% is normal, <strong>above 24% is high</strong><br>• Home loans: 8.5-10.5% (floating)<br>• Credit cards: 24-42% — pay full dues monthly<br>• FD: 6-7.5% per annum<br>• PPF: 7.1% — tax-free, government guaranteed<br>• RBI Repo Rate: 6.50% (benchmark)<br><br>Tip: If non-home loan rate > 15%, negotiate or compare.',
+    budget:   '💰 <strong>50/30/20 Budget Rule:</strong><br>• <strong>50%</strong> — Needs (rent, food, bills, EMIs)<br>• <strong>30%</strong> — Wants (dining, entertainment, shopping)<br>• <strong>20%</strong> — Savings & investments<br><br>Steps: Calculate income → list fixed expenses → track variable spending → set savings goal → review weekly.<br><br>💡 Tip: Transfer savings amount on Day 1 of month (Pay Yourself First).',
+    sip:      '📈 <strong>SIP Basics:</strong><br>• SIP = invest a fixed amount monthly in mutual funds<br>• Index funds (Nifty/Sensex): 0.1-0.5% expense ratio, ideal for beginners<br>• ELSS: Tax saving under 80C, 3-year lock-in<br>• Start with as little as ₹500/month<br>• Use SEBI-registered fund houses only (sebi.gov.in)<br><br>💡 Power of compounding: ₹5000/month at 12% for 10 years = ~₹11.6 lakh',
+    default:  '👋 I can help you with UPI payments, avoiding online scams, understanding interest rates, budgeting, SIP investments, and more.<br><br>Try asking:<br>• "How do I send money via UPI?"<br>• "How to avoid online fraud?"<br>• "What is a safe interest rate for a loan?"'
+  };
+
+  function localFallback(msg) {
+    const q = msg.toLowerCase();
+    if (q.match(/upi|payment|send money|bhim|gpay|phonepe/)) return fallbackMap.upi;
+    if (q.match(/scam|fraud|fake|otp|kyc|cyber|phishing/)) return fallbackMap.scam;
+    if (q.match(/interest|rate|loan|emi|fd|ppf|repo/)) return fallbackMap.interest;
+    if (q.match(/budget|saving|expense|50.30|emergency/)) return fallbackMap.budget;
+    if (q.match(/sip|mutual fund|index|nifty|elss|invest/)) return fallbackMap.sip;
+    return fallbackMap.default;
+  }
+
+  // ── QUICK ASKS ────────────────────────────────────────────────────────────
+  function sendQuick(q) {
+    document.getElementById('chatInput').value = q;
+    sendMessage();
+    scrollToChat();
+  }
+
+  function askTopic(q) {
+    scrollToChat();
+    setTimeout(() => sendQuick(q), 500);
+  }
+
+  // ── SAFE-SPEND SIMULATOR ──────────────────────────────────────────────────
+  function updateSim() {
+    const rent  = parseInt(document.getElementById('slRent').value);
+    const food  = parseInt(document.getElementById('slFood').value);
+    const ent   = parseInt(document.getElementById('slEnt').value);
+    const save  = parseInt(document.getElementById('slSave').value);
+
+    document.getElementById('vlRent').textContent = rent + '%';
+    document.getElementById('vlFood').textContent = food + '%';
+    document.getElementById('vlEnt').textContent  = ent  + '%';
+    document.getElementById('vlSave').textContent = save + '%';
+
+    const total = rent + food + ent + save;
+    const other = Math.max(0, 100 - total);
+
+    // Risk scoring
+    let score = 0;
+    if (rent > 40)  score += 35;  else if (rent > 30) score += 15;
+    if (food > 25)  score += 15;  else if (food > 20) score += 5;
+    if (ent  > 20)  score += 20;  else if (ent > 15)  score += 8;
+    if (save < 10)  score += 30;  else if (save < 20) score += 10;
+    if (total > 95) score += 20;
+
+    score = Math.min(score, 100);
+
+    const fill = document.getElementById('riskFill');
+    const label = document.getElementById('riskLabel');
+    const analysis = document.getElementById('riskAnalysis');
+
+    let color, emoji, riskText, advice;
+    if (score <= 25) {
+      color = '#10b981'; emoji = '🟢'; riskText = 'LOW RISK';
+      advice = `✅ Excellent plan! Rent/EMI at ${rent}% is manageable. Savings at ${save}% is ${save>=20?'great':'acceptable'}. You have ${other}% unaccounted — consider allocating to emergency fund or SIP.`;
+    } else if (score <= 50) {
+      color = '#f59e0b'; emoji = '🟡'; riskText = 'MODERATE RISK';
+      advice = `⚠️ Watch out: ${rent>30?'Rent/EMI above 30% strains cash flow. ':''}${save<20?'Savings below 20% is risky. ':''}${ent>15?'Entertainment spending is high. ':''}Try moving 5% from wants to savings.`;
+    } else if (score <= 75) {
+      color = '#f97316'; emoji = '🟠'; riskText = 'HIGH RISK';
+      advice = `🚨 Risky: ${rent>40?'Rent/EMI above 40% is a serious burden. ':''}${save<10?'Savings below 10% means no safety net. ':''}${total>95?'Over 95% allocated — no buffer for emergencies. ':''}Revisit your plan urgently.`;
+    } else {
+      color = '#ef4444'; emoji = '🔴'; riskText = 'CRITICAL RISK';
+      advice = `🆘 Critical: Your spending plan is financially dangerous. Rent/EMI at ${rent}%, savings at only ${save}%. Apply the 50/30/20 rule: Needs ≤50%, Wants ≤30%, Savings ≥20%. Call 1930 if scammed while in debt.`;
+    }
+
+    fill.style.width = score + '%';
+    fill.style.background = `linear-gradient(90deg, ${color}, ${color}99)`;
+    label.innerHTML = `${emoji} <span style="color:${color}">${riskText}</span> &nbsp;<span style="color:var(--muted);font-weight:400;font-size:.72rem">(score: ${score}/100)</span>`;
+    analysis.innerHTML = advice;
+  }
+
+  function askSimAI() {
+    const rent  = document.getElementById('slRent').value;
+    const food  = document.getElementById('slFood').value;
+    const ent   = document.getElementById('slEnt').value;
+    const save  = document.getElementById('slSave').value;
+    const q = `My monthly spending: Rent/EMI ${rent}%, Food ${food}%, Entertainment ${ent}%, Savings ${save}%. Is this financially safe? Give me advice based on 50/30/20 rule.`;
+    scrollToChat();
+    setTimeout(() => sendQuick(q), 500);
+  }
+
+  // ── EMI CALCULATOR ────────────────────────────────────────────────────────
+  function calcEMI() {
+    const P = parseFloat(document.getElementById('emiPrincipal').value) || 0;
+    const r = (parseFloat(document.getElementById('emiRate').value) || 0) / 12 / 100;
+    const n = parseInt(document.getElementById('emiMonths').value) || 1;
+    if (P <= 0 || r <= 0) return;
+    const emi = P * r * Math.pow(1+r,n) / (Math.pow(1+r,n) - 1);
+    const totalInt = emi * n - P;
+    document.getElementById('emiAmt').textContent = '₹' + Math.round(emi).toLocaleString('en-IN');
+    document.getElementById('emiInterest').textContent = '₹' + Math.round(totalInt).toLocaleString('en-IN');
+  }
+
+  // ── BUDGET CALCULATOR ─────────────────────────────────────────────────────
+  function calcBudget() {
+    const inc = parseFloat(document.getElementById('incomeInput').value) || 0;
+    if (inc <= 0) return;
+    const needs = inc * 0.5, wants = inc * 0.3, save = inc * 0.2;
+    const fmt = v => '₹' + Math.round(v).toLocaleString('en-IN');
+    document.getElementById('amt-needs').textContent = fmt(needs);
+    document.getElementById('amt-wants').textContent = fmt(wants);
+    document.getElementById('amt-save').textContent  = fmt(save);
+    document.getElementById('budgetTip').innerHTML =
+      `Income: <strong>${fmt(inc)}</strong> &nbsp;|&nbsp; Save: <strong style="color:var(--green)">${fmt(save)}</strong>/month`;
+  }
+
+  // ── SIP CALCULATOR ────────────────────────────────────────────────────────
+  function calcSIP() {
+    const m  = parseFloat(document.getElementById('sipAmount').value) || 0;
+    const r  = (parseFloat(document.getElementById('sipReturn').value) || 0) / 12 / 100;
+    const n  = (parseInt(document.getElementById('sipYears').value) || 0) * 12;
+    if (m <= 0 || r <= 0 || n <= 0) return;
+    const corpus = m * (Math.pow(1+r,n) - 1) / r * (1+r);
+    const invested = m * n;
+    const fmt = v => v >= 100000 ? '₹' + (v/100000).toFixed(2) + ' L' : '₹' + Math.round(v).toLocaleString('en-IN');
+    document.getElementById('sipCorpus').textContent  = fmt(corpus);
+    document.getElementById('sipInvested').textContent = fmt(invested);
+  }
+
+  // ── INIT ──────────────────────────────────────────────────────────────────
+  window.addEventListener('load', () => {
+    calcEMI();
+    calcSIP();
+    updateSim();
+  });
+</script>
+
+</body>
+</html>
