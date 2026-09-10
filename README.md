@@ -1,342 +1,125 @@
-# 💰 Finance AI Guider — Digital Financial Literacy Agent
+# Finance AI Guider — Digital Financial Literacy Agent
 
-> **AI-powered digital financial literacy assistant for safer, smarter and more informed financial decisions.**
+An AI-powered **Digital Financial Literacy Agent** designed to help users understand everyday financial topics such as UPI payments, online scams, interest rates, budgeting, mutual funds, and digital financial safety.
 
-Finance AI Guider is an intelligent financial-literacy platform designed to help users understand everyday financial concepts, identify potential digital-financial scams, manage personal finances, and access trustworthy financial guidance through a conversational AI interface.
+The application combines a modern web interface with a **Node.js backend** and **IBM watsonx.ai Granite** to provide conversational financial-literacy guidance.
 
-The system combines **IBM watsonx.ai, IBM Granite, Retrieval-Augmented Generation (RAG), financial knowledge sources, risk detection and a modern web interface** to provide grounded and user-friendly financial guidance.
-
----
-
-## 🎯 Problem Statement
-
-Millions of users interact with digital financial services without having sufficient knowledge about:
-
-* Digital payments and UPI
-* Online banking safety
-* Financial fraud and scams
-* Loans and interest rates
-* Personal budgeting
-* Savings and investments
-* Insurance
-* Responsible financial decision-making
-
-Generic AI assistants may also generate inaccurate or unsupported financial information.
-
-**Finance AI Guider addresses this problem by combining conversational AI with trusted financial knowledge and safety-oriented guardrails.**
+> **AICTE Problem Statement:** AI Agent for Digital Financial Literacy
+> **Technology:** IBM watsonx.ai + IBM Granite
+> **Application Type:** Full-stack web application
+> **Backend:** Node.js
+> **Frontend:** HTML, CSS, JavaScript
 
 ---
 
-## 💡 Solution
+## 🚀 Features
 
-Finance AI Guider acts as a **Digital Financial Literacy Agent** that can:
+### 💬 AI Financial Assistant
 
-### 🤖 AI Financial Assistant
+Users can ask questions about:
 
-Users can ask questions in natural language and receive simple, contextual explanations.
+* UPI and digital payments
+* Online banking
+* Financial scams
+* OTP and PIN safety
+* Interest rates
+* Loans and EMI concepts
+* Budgeting
+* Savings
+* Mutual funds
+* Cryptocurrency awareness
+* Personal financial planning
 
-Examples:
-
-> "How do I safely send money using UPI?"
-
-> "What should I do if someone asks for my OTP?"
-
-> "Explain compound interest."
-
-> "How can I create a monthly budget?"
+The backend sends suitable financial context to **IBM Granite** to generate a conversational response.
 
 ### 🛡️ Scam & Risk Awareness
 
-The system identifies potentially dangerous financial situations and provides preventive guidance.
+The application provides guidance for potentially risky situations, including:
 
-It can detect topics such as:
-
-* OTP/PIN requests
 * Fake bank calls
+* OTP requests
 * Phishing links
 * Fake investment schemes
-* UPI fraud
-* Account takeover attempts
 * Suspicious payment requests
-* Impersonation scams
+* Fraudulent customer-care numbers
+* Digital-payment scams
 
-For high-risk situations, the system prioritizes **safety instructions and official reporting channels** rather than speculative financial advice.
+For serious cyber-fraud situations, users are directed toward appropriate official reporting channels such as **1930** and the Government of India's cybercrime reporting portal.
 
-### 📚 RAG-Based Financial Knowledge
+### 📊 Financial Calculators
 
-Instead of relying only on the model's internal knowledge, the application retrieves relevant information from a curated financial knowledge base before generating an answer.
+The application includes interactive tools such as:
 
-This helps improve:
+* EMI Calculator
+* Budget Calculator
+* SIP Calculator
 
-* Accuracy
-* Relevance
-* Explainability
-* Source grounding
-* Financial safety
+These tools help users understand basic financial calculations without requiring specialist knowledge.
 
-### 💰 Financial Education
+### 🌐 Multilingual Support
 
-The platform can explain:
+The interface supports multilingual financial-literacy interactions, helping make financial concepts easier to understand for a wider range of users.
 
+### 🧠 Context-Based Financial Guidance
+
+The backend contains a structured financial knowledge base covering major topics including:
+
+* UPI
+* Scams
+* Interest Rates
 * Budgeting
-* Saving
-* Interest rates
-* Loans
-* Credit
-* Insurance
-* Investments
-* Digital payments
-* Financial fraud prevention
+* Mutual Funds
+* Cryptocurrency
 
-### 🌐 Multilingual Experience
-
-The architecture is designed to support financial-literacy content in multiple Indian languages, making financial education more accessible.
+Relevant context is selected according to the user's question before generating the AI response.
 
 ---
 
 # 🏗️ System Architecture
 
 ```text
-                         ┌───────────────────────────────┐
-                         │           USER                │
-                         │                               │
-                         │  Web Browser / Mobile Browser │
-                         └───────────────┬───────────────┘
-                                         │
-                                         │ HTTPS / REST API
-                                         ▼
-              ┌──────────────────────────────────────────────┐
-              │              FRONTEND                         │
-              │                                               │
-              │  • Financial Chat Interface                  │
-              │  • Scam Alert                                │
-              │  • Financial Education                       │
-              │  • Budgeting                                  │
-              │  • Risk Indicators                            │
-              │  • Multilingual UI                            │
-              └──────────────────────┬───────────────────────┘
-                                     │
-                                     │ API Request
-                                     ▼
-              ┌──────────────────────────────────────────────┐
-              │             BACKEND / API                    │
-              │                                               │
-              │                 FastAPI                       │
-              │                                               │
-              │  • Request Validation                        │
-              │  • Session Management                         │
-              │  • Risk Analysis                              │
-              │  • RAG Orchestration                          │
-              │  • AI Response Generation                     │
-              └──────────────┬─────────────────┬─────────────┘
-                             │                 │
-                ┌────────────┘                 └────────────┐
-                ▼                                           ▼
-       ┌─────────────────────┐                  ┌─────────────────────┐
-       │   SAFETY ENGINE     │                  │     RAG ENGINE      │
-       │                     │                  │                     │
-       │ • Scam Detection    │                  │ • Query Processing  │
-       │ • Risk Rules        │                  │ • Retrieval         │
-       │ • Prompt Guard      │                  │ • Ranking           │
-       │ • Safety Response   │                  │ • Context Building  │
-       └──────────┬──────────┘                  └──────────┬──────────┘
-                  │                                        │
-                  │                                        ▼
-                  │                              ┌─────────────────────┐
-                  │                              │   KNOWLEDGE BASE    │
-                  │                              │                     │
-                  │                              │ • Financial Guides  │
-                  │                              │ • CSV Dataset       │
-                  │                              │ • Trusted Sources   │
-                  │                              │ • Educational Data  │
-                  │                              └──────────┬──────────┘
-                  │                                         │
-                  │                                         ▼
-                  │                              ┌─────────────────────┐
-                  │                              │   VECTOR INDEX      │
-                  │                              │                     │
-                  │                              │ Embeddings +        │
-                  │                              │ Similarity Search   │
-                  │                              └──────────┬──────────┘
-                  │                                         │
-                  └────────────────┬────────────────────────┘
-                                   ▼
-                     ┌───────────────────────────────┐
-                     │        IBM watsonx.ai         │
-                     │                               │
-                     │       IBM Granite Model       │
-                     │                               │
-                     │ • Context-aware generation   │
-                     │ • Financial explanations     │
-                     │ • Grounded responses         │
-                     └───────────────┬───────────────┘
-                                     │
-                                     ▼
-                     ┌───────────────────────────────┐
-                     │      RESPONSE VALIDATION      │
-                     │                               │
-                     │ • Safety checks               │
-                     │ • Hallucination reduction    │
-                     │ • Financial disclaimer       │
-                     │ • Source/context validation  │
-                     └───────────────┬───────────────┘
-                                     │
-                                     ▼
-                              ┌───────────────┐
-                              │ USER RESPONSE │
-                              └───────────────┘
+                    ┌──────────────────────────┐
+                    │        User / Browser    │
+                    └────────────┬─────────────┘
+                                 │
+                                 ▼
+                    ┌──────────────────────────┐
+                    │       index.html         │
+                    │  HTML + CSS + JavaScript │
+                    └────────────┬─────────────┘
+                                 │
+                         HTTP / REST API
+                                 │
+                                 ▼
+                    ┌──────────────────────────┐
+                    │       Node.js Server     │
+                    │        server.js         │
+                    └────────────┬─────────────┘
+                                 │
+                 ┌───────────────┴────────────────┐
+                 │                                │
+                 ▼                                ▼
+       ┌───────────────────┐           ┌──────────────────┐
+       │ Context Retrieval │           │   IBM IAM        │
+       │ Financial KB      │           │ Authentication   │
+       └─────────┬─────────┘           └────────┬─────────┘
+                 │                              │
+                 └──────────────┬───────────────┘
+                                ▼
+                     ┌────────────────────────┐
+                     │     IBM watsonx.ai     │
+                     │     Granite Model      │
+                     │  ibm/granite-4-h-small │
+                     └────────────┬───────────┘
+                                  │
+                                  ▼
+                     ┌────────────────────────┐
+                     │ Financial AI Response  │
+                     └────────────┬───────────┘
+                                  │
+                                  ▼
+                         User / Browser UI
 ```
-
----
-
-# 🔄 AI + RAG Workflow
-
-```text
-User Question
-      │
-      ▼
-Query Validation
-      │
-      ▼
-Risk / Scam Detection
-      │
-      ├──────────── High Risk ────────────► Safety Response
-      │
-      ▼
-Query Understanding
-      │
-      ▼
-Knowledge Retrieval
-      │
-      ▼
-Vector Similarity Search
-      │
-      ▼
-Relevant Financial Context
-      │
-      ▼
-IBM Granite
-      │
-      ▼
-Grounded Response Generation
-      │
-      ▼
-Safety & Response Validation
-      │
-      ▼
-User-Friendly Answer
-```
-
----
-
-# 🧠 IBM Granite Integration
-
-The project uses **IBM Granite through watsonx.ai** as the core generative AI layer.
-
-Granite is responsible for:
-
-* Understanding user questions
-* Processing retrieved financial context
-* Generating natural-language explanations
-* Simplifying complex financial concepts
-* Producing context-aware responses
-* Supporting multilingual financial education
-
-The application architecture separates **retrieval, safety and generation**, allowing the AI model to operate within controlled boundaries.
-
----
-
-# 📚 Retrieval-Augmented Generation (RAG)
-
-The RAG pipeline follows:
-
-```text
-Financial Documents / CSV
-          │
-          ▼
-       Chunking
-          │
-          ▼
-      Embeddings
-          │
-          ▼
-      Vector Index
-          │
-          ▼
-     User Question
-          │
-          ▼
-   Similarity Retrieval
-          │
-          ▼
-   Relevant Context
-          │
-          ▼
-     IBM Granite
-          │
-          ▼
-    Grounded Answer
-```
-
-### Why RAG?
-
-RAG helps prevent the AI from answering financial questions solely from its pretrained knowledge.
-
-Instead, relevant information is retrieved from the project's curated knowledge base and supplied as context to the model.
-
----
-
-# 🛡️ AI Safety & Guardrails
-
-Financial applications require additional safety controls.
-
-Finance AI Guider implements multiple layers of protection.
-
-### Input Safety
-
-The application checks for:
-
-* Prompt injection attempts
-* Malicious instructions
-* Suspicious financial requests
-* Scam-related keywords
-* Sensitive-information requests
-
-### Financial Safety
-
-The assistant avoids:
-
-* Guaranteed-return claims
-* Unqualified investment recommendations
-* Requests for passwords, OTPs or PINs
-* Fabricated financial regulations
-* Unsupported claims about banks or financial institutions
-
-### Scam Safety
-
-For potentially fraudulent situations, the system prioritizes:
-
-1. Stop the transaction
-2. Do not share OTP/PIN/password
-3. Contact the relevant bank/payment provider
-4. Preserve evidence
-5. Report the incident through official channels
-
----
-
-# 🧩 Core Components
-
-| Component                 | Responsibility                           |
-| ------------------------- | ---------------------------------------- |
-| Frontend                  | User interaction and financial dashboard |
-| FastAPI Backend           | API and application orchestration        |
-| RAG Engine                | Knowledge retrieval                      |
-| Vector Index              | Semantic document search                 |
-| IBM Granite               | AI response generation                   |
-| Safety Engine             | Scam and financial risk detection        |
-| Knowledge Base            | Trusted financial information            |
-| Cloud Object Storage      | Dataset/document storage                 |
-| Environment Configuration | Secure credential management             |
 
 ---
 
@@ -346,111 +129,177 @@ For potentially fraudulent situations, the system prioritizes:
 Finance-AI-Guider-Digital-Financial-Literacy-Agent/
 │
 ├── index.html
-├── package.json
+│
 ├── server.js
+│
+├── package.json
+│
 ├── README.md
 │
-├── backend/
-│   ├── app.py
-│   ├── granite_client.py
-│   ├── rag_engine.py
-│   ├── safety_engine.py
-│   └── requirements.txt
+├── static/
+│   └── style.css
 │
-├── data/
-│   ├── financial_knowledge.csv
-│   └── documents/
+├── .vscode/
+│   └── settings.json
 │
-├── frontend/
-│   ├── assets/
-│   └── components/
-│
-├── .env.example
-├── .gitignore
-└── start.bat
+└── .gitignore
 ```
 
-> The exact directory structure can vary depending on the deployment configuration.
+### File Description
+
+| File                    | Purpose                                                                 |
+| ----------------------- | ----------------------------------------------------------------------- |
+| `index.html`            | Main frontend application and user interface                            |
+| `server.js`             | Node.js backend, API routes, IBM authentication and Granite integration |
+| `package.json`          | Node.js project configuration and dependencies                          |
+| `static/style.css`      | Additional application styling                                          |
+| `.vscode/settings.json` | Local VS Code development configuration                                 |
+| `.gitignore`            | Prevents sensitive/local files from being committed                     |
+| `README.md`             | Project documentation                                                   |
 
 ---
 
-# ☁️ IBM Cloud Architecture
+# ⚙️ Technology Stack
+
+## Frontend
+
+* HTML5
+* CSS3
+* JavaScript
+* Responsive UI
+* Interactive financial calculators
+* Chat interface
+
+## Backend
+
+* Node.js
+* Built-in HTTP/HTTPS modules
+* REST API
+* JSON-based communication
+* CORS support
+
+## IBM Cloud / AI
+
+* IBM watsonx.ai
+* IBM Granite
+* IBM IAM authentication
+* Granite model: `ibm/granite-4-h-small`
+
+---
+
+# 🔌 API Endpoints
+
+## POST `/api/chat`
+
+Processes a user's financial question.
+
+### Example request
+
+```json
+{
+  "message": "How do I safely send money using UPI?"
+}
+```
+
+### Processing flow
 
 ```text
-                   IBM Cloud
-                       │
-          ┌────────────┴────────────┐
-          │                         │
-          ▼                         ▼
-   ┌──────────────┐         ┌─────────────────┐
-   │  watsonx.ai  │         │ Cloud Object    │
-   │              │         │ Storage         │
-   │ IBM Granite  │         │                 │
-   └──────┬───────┘         │ CSV / Documents │
-          │                 └────────┬────────┘
-          │                          │
-          ▼                          ▼
-   ┌─────────────────────────────────────┐
-   │            RAG Pipeline             │
-   │                                     │
-   │ Retrieval → Context → Granite       │
-   └──────────────────┬──────────────────┘
-                      │
-                      ▼
-              ┌──────────────┐
-              │ FastAPI      │
-              │ Backend      │
-              └──────┬───────┘
-                     │
-                     ▼
-              ┌──────────────┐
-              │ Web Frontend │
-              └──────┬───────┘
-                     │
-                     ▼
-                    User
+User Question
+      ↓
+Node.js /api/chat
+      ↓
+Financial Context Retrieval
+      ↓
+Prompt Construction
+      ↓
+IBM IAM Authentication
+      ↓
+IBM watsonx.ai
+      ↓
+Granite
+      ↓
+AI Financial Guidance
+      ↓
+Browser
 ```
 
 ---
 
-# 🔐 Environment Variables
+## GET `/api/topics`
 
-Credentials should never be hard-coded in source code.
+Returns the available financial education topics supported by the application.
 
-Create a `.env` file locally:
+---
+
+# 🧠 Financial Knowledge Retrieval
+
+The current implementation uses a structured local financial knowledge base inside the Node.js backend.
+
+The knowledge categories include:
+
+```text
+UPI
+Scams
+Interest Rates
+Budgeting
+Mutual Funds
+Cryptocurrency
+```
+
+The user's question is analyzed to identify relevant financial context.
+
+That context is then supplied to IBM Granite so that the generated answer is grounded in the application's financial-literacy information.
+
+### Important
+
+The current repository implements **context-based/keyword retrieval** rather than claiming a live IBM watsonx Vector Index integration.
+
+This README intentionally describes the implementation that is actually present in the repository.
+
+---
+
+# 🔐 Security
+
+IBM credentials must **never be committed to GitHub**.
+
+Use environment variables for credentials.
+
+Example:
 
 ```env
-IBM_CLOUD_API_KEY=your_api_key
-WATSONX_PROJECT_ID=your_project_id
-WATSONX_URL=https://ap-south-1.aws.wxai.ibm.com
-
-COS_API_KEY=your_cos_api_key
-COS_RESOURCE_INSTANCE_ID=your_resource_instance_id
-COS_BUCKET=your_bucket_name
-COS_ENDPOINT=your_cos_endpoint
+IBM_API_KEY=your_ibm_api_key
+IBM_PROJECT_ID=your_watsonx_project_id
+IBM_REGION=us-south
 ```
 
-### Security
+Add `.env` to `.gitignore`:
 
-Never commit:
-
-```text
+```gitignore
 .env
+node_modules/
+venv/
+__pycache__/
+*.pyc
 ```
 
-to GitHub.
+### ⚠️ Important
 
-Use:
+If an IBM API key has previously been committed to a public GitHub repository, treat that key as compromised.
 
-```text
-.env.example
-```
+**Revoke/rotate the exposed key in IBM Cloud before deploying the application.**
 
-for sharing the required variable names without exposing secrets.
+Never place a real API key in:
+
+* `server.js`
+* `index.html`
+* `README.md`
+* GitHub commits
+* screenshots
+* presentations
 
 ---
 
-# 🚀 Installation
+# 💻 Local Installation
 
 ## 1. Clone the repository
 
@@ -458,205 +307,240 @@ for sharing the required variable names without exposing secrets.
 git clone https://github.com/Anusha-demonslayer/Finance-AI-Guider-Digital-Financial-Literacy-Agent.git
 ```
 
+## 2. Enter the project
+
 ```bash
 cd Finance-AI-Guider-Digital-Financial-Literacy-Agent
-```
-
-## 2. Create a Python environment
-
-```bash
-python -m venv venv
-```
-
-### Windows
-
-```powershell
-venv\Scripts\activate
 ```
 
 ## 3. Install dependencies
 
 ```bash
-pip install -r backend/requirements.txt
+npm install
 ```
 
-## 4. Configure environment variables
+## 4. Configure IBM credentials
 
-Create:
+Create a local `.env` file containing your IBM Cloud credentials.
 
-```text
-.env
-```
+Do not upload this file to GitHub.
 
-and add your IBM Cloud and watsonx credentials.
-
-## 5. Start the backend
+## 5. Start the application
 
 ```bash
-uvicorn backend.app:app --reload --port 8000
+npm start
 ```
 
-## 6. Open the application
+The server runs locally on:
 
 ```text
-http://localhost:8000
+http://localhost:3000
 ```
+
+Open the address in a browser.
 
 ---
 
-# 🔌 API Architecture
+# ☁️ IBM Cloud Deployment
 
-### Chat
+The application is designed so that the Node.js server can serve the frontend and API from the same application.
 
-```http
-POST /api/chat
-```
-
-Example:
-
-```json
-{
-  "message": "How can I identify a UPI scam?"
-}
-```
-
-### Risk Analysis
-
-```http
-POST /api/risk
-```
-
-Example:
-
-```json
-{
-  "message": "Someone called me and asked for my OTP."
-}
-```
-
-### Health Check
-
-```http
-GET /api/health
-```
-
-Used to verify backend availability.
-
----
-
-# 📊 Key Features
-
-* 🤖 IBM Granite-powered conversational AI
-* 📚 Retrieval-Augmented Generation
-* 🛡️ Financial scam detection
-* 🔐 Safety guardrails
-* 💳 Digital payment education
-* 💰 Budgeting guidance
-* 📈 Financial concept explanations
-* 🌐 Multilingual-ready architecture
-* ☁️ IBM Cloud integration
-* 📦 Cloud Object Storage support
-* 🔎 Vector-based knowledge retrieval
-* ⚡ FastAPI backend
-* 🎨 Modern responsive web interface
-
----
-
-# 🏆 Innovation
-
-Finance AI Guider is designed around the principle:
-
-> **"Educate first. Protect always."**
-
-Instead of functioning as a generic chatbot, the system combines:
+A typical deployment architecture is:
 
 ```text
-Financial Education
-        +
-Trusted Knowledge
-        +
-RAG
-        +
-IBM Granite
-        +
-Risk Detection
-        +
-Safety Guardrails
-        =
-Responsible Financial AI
+                    Internet
+                       │
+                       ▼
+              ┌─────────────────┐
+              │   IBM Code      │
+              │    Engine       │
+              └────────┬────────┘
+                       │
+                       ▼
+              ┌─────────────────┐
+              │   Node.js App   │
+              │   server.js     │
+              └────────┬────────┘
+                       │
+                       ▼
+              ┌─────────────────┐
+              │ IBM watsonx.ai  │
+              │ Granite         │
+              └─────────────────┘
 ```
 
-This architecture makes the system more appropriate for real-world financial-literacy scenarios where **accuracy, trust and safety are more important than simply generating an answer.**
+For cloud deployment, the application should listen on the port supplied by the hosting platform.
+
+The server should therefore use an environment-defined port:
+
+```javascript
+const PORT = process.env.PORT || 3000;
+```
+
+This allows local development on port `3000` while allowing IBM Code Engine to provide its own runtime port.
 
 ---
 
 # 🎯 Target Users
 
-The platform can support:
+The application is intended for users who want simple explanations of financial concepts, particularly:
 
 * Students
+* Young adults
 * First-time digital-payment users
-* Rural and semi-urban users
-* Senior citizens
-* New banking customers
-* Small-business users
+* New investors
 * Users learning personal finance
-* Users who want to identify suspicious financial activity
+* People seeking basic online-safety guidance
+
+The application is designed for **financial education and awareness**, not personalized professional financial advice.
 
 ---
 
-# 🌱 Future Enhancements
+# 🛡️ Responsible AI
+
+The application follows a financial-literacy-first approach.
+
+The AI should:
+
+* Explain financial concepts in simple language.
+* Avoid guaranteeing investment returns.
+* Warn users about financial scams.
+* Encourage users to verify suspicious requests.
+* Avoid requesting OTPs, passwords, PINs, or banking credentials.
+* Encourage users to use official banking and government channels.
+* Clearly distinguish educational information from professional financial advice.
+
+---
+
+# 📚 Example Questions
+
+Users can ask:
+
+```text
+How do I send money safely using UPI?
+
+Someone is asking me for my OTP. What should I do?
+
+What is an interest rate?
+
+How can I create a monthly budget?
+
+What is an EMI?
+
+What is a mutual fund?
+
+How can I identify an online investment scam?
+
+What should I do if I transferred money to a scammer?
+```
+
+---
+
+# 🔄 Example AI Flow
+
+```text
+User:
+"Someone called me saying they are from my bank
+and asked for my OTP."
+
+                    ↓
+
+        Financial topic detection
+
+                    ↓
+
+             Scam context
+
+                    ↓
+
+         Safety-oriented prompt
+
+                    ↓
+
+             IBM Granite
+
+                    ↓
+
+AI response explaining that OTPs should never be
+shared and recommending appropriate official
+fraud-reporting channels.
+```
+
+---
+
+# 🏆 Project Objective
+
+The objective of **Finance AI Guider** is to make digital financial literacy more accessible through an AI-powered conversational assistant.
+
+The project focuses on:
+
+1. Digital payment awareness
+2. Financial scam prevention
+3. Personal finance education
+4. Basic investment awareness
+5. Budgeting and financial planning
+6. Multilingual accessibility
+7. Responsible use of generative AI
+
+---
+
+# 📌 AICTE Problem Statement Alignment
+
+The project addresses the requirements of an AI agent for digital financial literacy by providing:
+
+| Requirement                   | Implementation |
+| ----------------------------- | -------------- |
+| UPI guidance                  | ✅              |
+| Online scam awareness         | ✅              |
+| Interest-rate education       | ✅              |
+| Budgeting                     | ✅              |
+| Personal finance guidance     | ✅              |
+| Multilingual interaction      | ✅              |
+| AI conversational interface   | ✅              |
+| IBM Granite                   | ✅              |
+| IBM watsonx.ai                | ✅              |
+| Financial knowledge retrieval | ✅              |
+| Interactive calculators       | ✅              |
+| Risk/scam awareness           | ✅              |
+
+---
+
+# 🚧 Future Enhancements
 
 Potential future improvements include:
 
-* Voice-based financial assistant
+* IBM watsonx Vector Index integration
+* PDF/CSV knowledge ingestion
+* Embedding-based semantic retrieval
+* Government-source document synchronization
 * More Indian-language support
-* OCR for suspicious transaction screenshots
-* Document/evidence analysis
-* Personalized financial-literacy journeys
-* Advanced scam classification
-* Real-time official-source verification
-* Financial-literacy quizzes
-* Personalized budgeting dashboards
-* Explainable AI responses
-* Mobile application
-* Analytics dashboard for administrators
+* Voice-based financial assistance
+* Personalized budgeting
+* Advanced financial-risk classification
+* IBM Cloud production deployment
+* Authentication and user profiles
+* Conversation history
 
 ---
 
 # ⚠️ Disclaimer
 
-Finance AI Guider is an **educational financial-literacy tool**.
+Finance AI Guider is an educational financial-literacy application.
 
-It does not replace professional financial, legal, tax or investment advice.
+The information provided by the application should not be considered professional financial, investment, legal, tax, or banking advice.
 
-Users should verify important financial decisions with their bank, regulated financial institution, government authority or qualified professional.
-
-The application should never request or store:
-
-* OTPs
-* PINs
-* Passwords
-* CVV
-* Banking credentials
-* Private authentication codes
+Users should verify important financial decisions through official institutions and qualified professionals.
 
 ---
 
-# 👥 Project
+# 👩‍💻 Project
 
-**Project:** Finance AI Guider — Digital Financial Literacy Agent
+**Finance AI Guider — Digital Financial Literacy Agent**
 
-**Technology:** IBM watsonx.ai + IBM Granite + RAG + FastAPI + Web Technologies
+Built using:
 
-**Platform:** IBM Cloud
+**IBM watsonx.ai + IBM Granite + Node.js + HTML/CSS/JavaScript**
 
-**Repository:** Finance-AI-Guider-Digital-Financial-Literacy-Agent
+GitHub Repository:
 
----
-
-## ⭐ Vision
-
-> **Make trustworthy financial knowledge accessible to everyone, while helping people recognize and avoid digital financial scams.**
-
-**Finance AI Guider — Learn. Verify. Protect.**
+`https://github.com/Anusha-demonslayer/Finance-AI-Guider-Digital-Financial-Literacy-Agent`
